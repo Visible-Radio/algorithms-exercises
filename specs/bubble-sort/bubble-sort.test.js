@@ -2,16 +2,43 @@
   Write a bubble sort here
   Name the function bubbleSort
   Return the sorted array at the end
-  
+
   To run the tests, change the `test.skip(…)` below to `test(…)`
-  
+
   Bubble sort works by comparing two adjacent numbers next to each other and then
   swapping their places if the smaller index's value is larger than the larger
   index's. Continue looping through until all values are in ascending order
 */
 
 function bubbleSort(nums) {
-  // code goes here
+  const swap = (arr, index1, index2) => {
+    const temp = arr[index1];
+    arr[index1] = arr[index2];
+    arr[index2] = temp;
+  };
+
+  let dirty = true;
+
+  // count is an optimization - works without it
+  let count = 0;
+  while (dirty) {
+    let swapped = false;
+    for (let i = 0; i < nums.length - count; i++) {
+      const current = nums[i];
+      const next = nums[i + 1];
+
+      if (current > next) {
+        swap(nums, i, i + 1);
+        swapped = true;
+      }
+    }
+    count++;
+
+    if (!swapped) {
+      dirty = false;
+    }
+  }
+  return nums;
 }
 
 // unit tests
