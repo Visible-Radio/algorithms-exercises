@@ -1,9 +1,9 @@
 /*
 
   Quick Sort!
-  
+
   Name your function quickSort.
-  
+
   Quick sort should grab a pivot from the end and then separate the list (not including the pivot)
   into two lists, smaller than the pivot and larger than the pivot. Call quickSort on both of those
   lists independently. Once those two lists come back sorted, concatenate the "left" (or smaller numbers)
@@ -13,14 +13,30 @@
 */
 
 function quickSort(nums) {
-  // code goes here
+  if (nums.length <= 1) return nums;
+
+  const pivot = nums.at(-1);
+  const { left, right } = nums.reduce(
+    (acc, num) => {
+      if (num < pivot) {
+        acc.left.push(num);
+      }
+
+      if (num > pivot) {
+        acc.right.push(num);
+      }
+      return acc;
+    },
+    { left: [], right: [] }
+  );
+
+  return [...quickSort(left), pivot, ...quickSort(right)];
 }
 
 // unit tests
 // do not modify the below code
-test.skip("quickSort", function () {
+test("quickSort", function () {
   const input = [10, 8, 2, 1, 6, 3, 9, 4, 7, 5];
   const answer = quickSort(input);
-
   expect(answer).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 });
