@@ -85,9 +85,39 @@ function getDigitAtPosition(number, position, depth = 0) {
   return getDigitAtPosition((number - remainder) / 10, position, depth + 1);
 }
 
-function getMaxDigits(numberArray) {}
+const getNumberOfDigits = (number, depth = 1) => {
+  if (number < 10) {
+    return depth;
+  }
+  const remainder = number % 10;
+  return getNumberOfDigits((number - remainder) / 10, depth + 1);
+};
 
-test.only("getDigitAtPosition", () => {
+function getMaxDigits(numberArray) {
+  return numberArray.reduce((acc, elem) => {
+    const compareTo = getNumberOfDigits(elem);
+
+    if (compareTo > acc) {
+      return compareTo;
+    } else {
+      return acc;
+    }
+  }, 0);
+}
+
+test("getNumberOfDigits", () => {
+  expect(getNumberOfDigits(0)).toBe(1);
+  expect(getNumberOfDigits(1)).toBe(1);
+  expect(getNumberOfDigits(10)).toBe(2);
+  expect(getNumberOfDigits(11)).toBe(2);
+  expect(getNumberOfDigits(100)).toBe(3);
+  expect(getNumberOfDigits(105)).toBe(3);
+  expect(getNumberOfDigits(1000)).toBe(4);
+  expect(getNumberOfDigits(1123)).toBe(4);
+  expect(getNumberOfDigits(10000)).toBe(5);
+});
+
+test("getDigitAtPosition", () => {
   expect(getDigitAtPosition(15913, 0)).toBe(3);
   expect(getDigitAtPosition(15913, 1)).toBe(1);
   expect(getDigitAtPosition(15913, 2)).toBe(9);
@@ -96,8 +126,8 @@ test.only("getDigitAtPosition", () => {
   expect(getDigitAtPosition(15913, 5)).toBe(0);
 });
 
-function radixSort2(array) {
-  const maxDigits = getMaxDigits();
+function radixSort2(numbers) {
+  const maxDigits = getMaxDigits(numbers);
 
   let out = numbers;
   for (let position = 0; position < maxDigits; position++) {
@@ -106,11 +136,12 @@ function radixSort2(array) {
     for (let j = 0; j < numbers.length; j++) {
       const number = out[j];
       const bucketIndex = getDigitAtPosition(number, position);
+
       buckets[bucketIndex].push(number);
     }
     out = buckets.flat();
   }
-  return out.map(({ number }) => number);
+  return out;
 }
 
 function numbersWithMeta(nums) {
@@ -181,4 +212,4 @@ const createTest = funcToTest => () => {
   });
 };
 
-[radixSort1].forEach(func => createTest(func)());
+[radixSort1, radixSort2].forEach(func => createTest(func)());
