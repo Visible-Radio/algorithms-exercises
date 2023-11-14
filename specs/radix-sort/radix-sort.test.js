@@ -207,6 +207,7 @@ const createTest = funcToTest => () => {
       const ans = funcToTest(nums);
       const sanity = ans.every((num, i, arr) => num > (arr[i - 1] ?? 0));
       expect(sanity).toBe(true);
+      expect(ans).toHaveLength(fill);
       expect(ans).toEqual(nums.sort((a, b) => a - b));
     });
   });
