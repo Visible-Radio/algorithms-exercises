@@ -1,16 +1,16 @@
 /*
   ArrayList
-  
+
   We are going to approximate an implementation of ArrayList. In JavaScript terms, that means we are
   going to implement an array using objects. You should not use arrays at all in this exercise, just
   objects. Make a class (or constructor function; something you can call new on) called ArrayList.
   ArrayList should have the following properties (in addition to whatever properties you create):
-  
+
   length - integer  - How many elements in the array
   push   - function - accepts a value and adds to the end of the list
   pop    - function - removes the last value in the list and returns it
   get    - function - accepts an index and returns the value at that position
-  delete - function - accepts an index, removes value from list, collapses, 
+  delete - function - accepts an index, removes value from list, collapses,
                       and returns removed value
 
   As always, you can change describe to xdescribe to prevent the unit tests from running while
@@ -18,16 +18,50 @@
 */
 
 class ArrayList {
-  // code goes here
+  constructor() {
+    this.data = {};
+    this.length = 0;
+  }
+
+  push(value) {
+    this.data[this.length] = value;
+    this.length += 1;
+    return this;
+  }
+
+  pop() {
+    if (this.length < 1) return undefined;
+    const popped = this.data[this.length - 1];
+    delete this.data[this.length - 1];
+    this.length -= 1;
+    return popped;
+  }
+
+  get(index) {
+    return this.data[index];
+  }
+
+  delete(index) {
+    const deleted = this.data[index];
+    delete this.data[index];
+
+    // fill the "hole" left by the removed item, by moving all items with index > deleteIndex to the left
+    for (let i = index + 1; i < this.length; i++) {
+      this.data[i - 1] = this.data[i];
+    }
+
+    this.length -= 1;
+    return deleted;
+  }
 }
 
 // unit tests
 // do not modify the below code
-describe.skip("ArrayList", function () {
-  const range = (length) =>
+describe("ArrayList", function () {
+  const range = length =>
     Array.apply(null, { length: length }).map(Number.call, Number);
-  const abcRange = (length) =>
-    range(length).map((num) => String.fromCharCode(97 + num));
+  const abcRange = length =>
+    range(length).map(num => String.fromCharCode(97 + num));
   let list;
 
   beforeEach(() => {
@@ -39,12 +73,12 @@ describe.skip("ArrayList", function () {
   });
 
   test("push", () => {
-    abcRange(26).map((character) => list.push(character));
+    abcRange(26).map(character => list.push(character));
     expect(list.length).toEqual(26);
   });
 
   test("pop", () => {
-    abcRange(13).map((character) => list.push(character));
+    abcRange(13).map(character => list.push(character));
     expect(list.length).toEqual(13);
     range(10).map(() => list.pop());
     expect(list.length).toEqual(3);
@@ -57,7 +91,7 @@ describe.skip("ArrayList", function () {
     list.push("second");
     expect(list.get(1)).toEqual("second");
     expect(list.get(0)).toEqual("first");
-    abcRange(26).map((character) => list.push(character));
+    abcRange(26).map(character => list.push(character));
     expect(list.get(27)).toEqual("z");
     expect(list.get(0)).toEqual("first");
     expect(list.get(9)).toEqual("h");
@@ -66,7 +100,7 @@ describe.skip("ArrayList", function () {
   });
 
   test("delete", () => {
-    abcRange(26).map((character) => list.push(character));
+    abcRange(26).map(character => list.push(character));
     list.delete(13);
     expect(list.length).toEqual(25);
     expect(list.get(12)).toEqual("m");
