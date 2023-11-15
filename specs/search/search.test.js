@@ -10,6 +10,7 @@ function linearSearch(id, array) {
   }
 }
 
+/** uses slice, which would be not as good in terms of spatial complexity as if we manually kept track of left and right cursors within the entire array  🤷🏻*/
 function binarySearch(id, array) {
   let middle = Math.floor(array.length / 2);
   let slice = array;
