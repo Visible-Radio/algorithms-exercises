@@ -29,6 +29,7 @@ class LinkedList {
     this.tail = null;
     this.length = 0;
   }
+
   push(value) {
     const newNode = new Node(value);
     if (this.tail) {
@@ -39,13 +40,15 @@ class LinkedList {
     }
     this.tail = newNode;
     this.length += 1;
+    return this;
   }
+
   pop() {
-    return this.delete(this.length - 1)?.value;
+    return this.delete(this.length - 1);
   }
 
   getNode(index, node = this.head) {
-    if (index > this.length) {
+    if (index > this.length - 1) {
       return undefined;
     }
     if (index === 0) {
@@ -66,9 +69,12 @@ class LinkedList {
     // deleting head
     if (index === 0) {
       const deleted = this.head;
+      if (this.head === this.tail) {
+        this.tail = null;
+      }
       this.head = this.head.next;
       this.length -= 1;
-      return deleted;
+      return deleted.value;
     }
 
     // deleting tail
@@ -78,14 +84,14 @@ class LinkedList {
       nodeBefore.next = null;
       this.tail = nodeBefore;
       this.length -= 1;
-      return deleted;
+      return deleted.value;
     }
 
     const nodeBefore = this.getNode(index - 1);
     const deleted = nodeBefore.next;
     this.length -= 1;
     nodeBefore.next = nodeBefore.next.next;
-    return deleted;
+    return deleted.value;
   }
 }
 
@@ -136,8 +142,8 @@ describe("LinkedList", function () {
     expect(list.get(27)).toEqual("z");
     expect(list.get(0)).toEqual("first");
     expect(list.get(9)).toEqual("h");
-    // list.pop();
-    // expect(list.get(list.length - 1)).toEqual("y");
+    list.pop();
+    expect(list.get(list.length - 1)).toEqual("y");
   });
 
   test("delete", () => {
@@ -149,5 +155,25 @@ describe("LinkedList", function () {
     list.delete(0);
     expect(list.length).toEqual(24);
     expect(list.get(0)).toEqual("b");
+  });
+
+  test("delete head when length === 1", () => {
+    const list = new LinkedList();
+    list.push("item one");
+    expect(list.length).toEqual(1);
+    expect(list.delete(0)).toEqual("item one");
+    expect(list.length).toEqual(0);
+    expect(list.head).toBeNull();
+    expect(list.tail).toBeNull();
+  });
+
+  test("delete head when length > 1", () => {
+    const list = new LinkedList();
+    list.push("item one").push("item two");
+    expect(list.length).toEqual(2);
+    expect(list.delete(0)).toEqual("item one");
+    expect(list.length).toEqual(1);
+    expect(list.head.value).toBe("item two");
+    expect(list.head.next).toBeNull();
   });
 });
